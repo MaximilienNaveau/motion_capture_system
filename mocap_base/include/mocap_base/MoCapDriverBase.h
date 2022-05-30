@@ -22,6 +22,7 @@
 #include <string>
 #include <vector>
 #include <boost/thread.hpp>
+#include <boost/asio/io_service.hpp>
 #include <boost/shared_ptr.hpp>
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
@@ -140,7 +141,10 @@ class MoCapDriverBase{
       frame_rate     (100),
       model_list     (std::vector<std::string>(0)),
       publish_tf     (false),
-      fixed_frame_id ("mocap"){
+      fixed_frame_id ("mocap"),
+      io_service_(),
+      io_work_(io_service_),
+      threadpool_(){
       return;
     }
 
@@ -209,6 +213,10 @@ class MoCapDriverBase{
     std::string fixed_frame_id;
     tf::TransformBroadcaster tf_publisher;
 
+    // Thread pool.
+    boost::asio::io_service io_service_;
+    boost::asio::io_service::work io_work_;
+    boost::thread_group threadpool_;
 };
 }
 
